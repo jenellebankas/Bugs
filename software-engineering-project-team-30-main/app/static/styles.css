@@ -714,3 +714,11 @@ button:hover {
     background-color: white;
   }
   
+  .access-input-group{
+    font-size: 18px;
+    padding: 12px;
+    width: 600px;
+    display: block;
+    margin-bottom: 15px;
+}
+  

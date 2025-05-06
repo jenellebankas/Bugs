@@ -9,7 +9,7 @@
         <form action="" method="post" name="EditProfilePage" class="p-4 border rounded shadow-sm bg-white">
             {{ form.hidden_tag() }}
 
-            <div class="input-group">
+            <div class="access-input-group">
                 <h3>{{ form.password(class_='form-control', placeholder="Enter your password to access your profile") }} </h3>
 
                 {% for error in form.password.errors %}
