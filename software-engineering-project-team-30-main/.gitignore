@@ -1,0 +1,6 @@
+migrations
+.idea
+__pycache__
+flask
+app.db
+source/lib/python3.12/site-packages/*

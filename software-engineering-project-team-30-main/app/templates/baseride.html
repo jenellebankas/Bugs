@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Drive</h1>
+
+    <a href="{{ url_for('make_journey') }}", class="btn btn-primary">New Journey</a>
+    <a href="previousjourneys.html", class="btn btn-secondary">Choose from Previously Created Journeys</a>
+
+<h1>option to choose a previously saved journey</h1>
+<h1>Create A Ride</h1>
+
+<h1>Which vehicle are you driving?</h1>
+{% for c in cars %}
+    <p>List of cars registed to person</p>
+
+    <h1>Cost</h1>
+<p>Minimum £5. Automctcally calculate cost based on calculated distance?? ie £3 per mile</p>
+
+<h1>Submit</h1>
+<p>creates a journey which can be booked on to.</p>
+{% endfor %}
+
+{% endblock %}

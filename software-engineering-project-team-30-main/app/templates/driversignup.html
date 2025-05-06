@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:80vh;">
+    <div class ="col-md-6">
+
+    <h1>Register to Drive!</h1>
+    <p>Enter your details below.</p>
+
+        <form action="" method="post" name="CarRegistration" class="p-4 border rounded shadow-sm bg-white">
+            {{ form.hidden_tag() }}
+
+            <div class="input-group">
+                <h3> Driver Licence Number {{ form.liscence_num(class_='form-control', placeholder="Enter your driver's licence number") }} </h3>
+
+                </div>
+
+            <div class="input-group">
+
+            <h3>Registration Plate {{ form.reg_plate(class_='form-control', placeholder="Enter your car reg plate") }} </h3>
+
+            </div>
+
+            <div class="input-group">
+
+                <h3>Car Manufacturer {{ form.make(class_='form-control', placeholder="Enter your car manufacturer") }} </h3>
+
+            </div>
+
+
+            <div class="input-group">
+
+            <h3>Model {{ form.model(class_='form-control', placeholder="Enter car model") }} </h3>
+
+
+            </div>
+
+
+            <div class="input-group">
+
+                <h3>Car Colour {{ form.colour(class_='form-control', placeholder="Enter your car colour") }} </h3>
+
+
+            </div>
+
+            <div class="input-group">
+
+                    <h3>Car Nickname {{ form.car_nickname(class_='form-control', placeholder="Enter a memorable nickname for your car") }} </h3>
+
+                </div>
+
+            <div class="input-group">
+
+                <h3>Available Seats {{ form.max_seats(class_='form-control', placeholder="Enter the max number of passengers that can be driven.") }} </h3>
+
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Register</button><br>
+            
+        </form>
+</div>
+</div>
+
+{% if error_message %}
+  <script>
+    showFlashMessage('{{ error_message }}', 'warning');
+  </script>
+{% endif %}
+
+
+{% endblock %}
+

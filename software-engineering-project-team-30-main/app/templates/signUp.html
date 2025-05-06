@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="edit-profile-container">
+    <h1 class="text-center mb-4">Sign Up to Skrrrt!</h1>
+    <form action="" method="post" name="Register-Page" class="p-4 border rounded shadow-sm bg-white">
+      {{ form.hidden_tag() }}
+
+      <div class="input-group">
+        <label for="first_name">First Name</label>
+        {{ form.first_name(class_='form-control', id='username') }}
+
+        {% for error in form.first_name.errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="input-group">
+        <label for="last_name">Last Name</label>
+
+        {{ form.last_name(class_='form-control', id='username') }}
+        {% for error in form.last_name.errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+
+        {{ form.password(class_='form-control', id='password') }}
+        {% for error in form.password.errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="input-group">
+        <label for="password">Confirm Password</label>
+
+        {{ form.confirmpassword(class_='form-control', id='password') }}
+        {% for error in form.confirmpassword.errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="input-group">
+        <label for="email">Email</label>
+
+        {{ form.email(class_='form-control', id='email') }}
+        {% for error in form.email.errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="input-group">
+        <label for="Phone Number">Phone Number</label>
+
+        {{ form.phone_number(class_='form-control', id='email') }}
+        {% for error in form.phone_number.errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Sign Up</button><br>
+      
+      <div class="text-center mt-3">
+        <a href="/login">Already have an Account? Login</a>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

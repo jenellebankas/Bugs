@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <!-- Left Side: Tabs and Booking Content -->
+    <div id="bookings-container">
+        <h2 class="text-center">Your Bookings</h2>
+
+        <ul class="nav nav-tabs" id="booking_tabs">
+            {% if driver %}
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#pending">Pending Invites {% if pending_bookings %}({{pending_bookings|length}}){%endif%}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#your_drives">Your Drives {% if driver_rides %}({{driver_rides|length}}){%endif%}</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link {% if not driver %}active{% endif %}" data-bs-toggle="tab" href="#your_rides">Your Rides {% if user_bookings %}({{user_bookings|length}}){%endif%}</a>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-3">
+            {% if current_user.is_driver %}
+            <!-- Pending Invites for the Driver -->
+            <div class="tab-pane fade show active" id="pending">
+                <div class="card shadow p-3">
+                    <h3>Pending Invites</h3>
+                    <p>Passengers have requested to join your ride. Accept or Decline.</p>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Passenger</th>
+                                    <th>Pickup</th>
+                                    <th>Dropoff</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in pending_bookings %}
+                                <div class="card border p-3 mb-3">
+                                <tr>
+                                    <td>{{ booking.user_name }}</td>  
+                                    <td>{{ booking.pickup_location }}</td>
+                                    <td>{{ booking.dropoff_location }}</td>
+                                    <td>{{ booking.date }}</td>
+                                    <td>{{ booking.time }}</td>
+                                    <td>£{{ booking.price }}</td>
+                                    <td>
+                                        <form action="{{ url_for('accept_booking', booking_id=booking.id) }}" method="post">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                                        </form>
+                                        <form action="{{ url_for('decline_booking', booking_id=booking.id) }}" method="post">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                </div>
+                                {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No pending requests</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Your Drives (as a Driver) -->
+            <div class="tab-pane fade" id="your_drives">
+                <div class="card shadow p-3">
+                    <h3>Your Drives</h3>
+                    <p>These are the upcoming rides you are driving.</p>
+                    
+                    {% for ride in driver_rides %}
+                    <div class="card border p-3 mb-3">
+                        {% if ride.num_confirmed == ride.car.max_seats %}
+                            <p><button class="btn btn-danger btn-sm" disabled><strong>Ride Full.</strong></button></p>
+                        {% endif %}
+
+                        {% if ride.journey_status == "CANCELLED" %}
+                            <p><button class="btn btn-danger btn-sm" disabled><strong>Status: </strong>Cancelled</button></p>
+                        {% endif %}
+
+                        <p><strong>Pickup:</strong> {{ ride.pickup_location }}</p>
+                        <p><strong>Dropoff:</strong> {{ ride.dropoff_location }}</p>
+                        <p><strong>Departure:</strong> {{ ride.date }} @ {{ ride.time }} </p>
+                        <p><strong>Passengers:</strong> {{ ride.num_confirmed }}/{{ ride.car.max_seats }}</p>
+
+                        {% if ride.datetime > today_in15mins and ride.journey_status != "CANCELLED" %}
+                    
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#editLocationModal" data-type="dropoff"
+                            data-location-id={{ride.id}}
+                            onclick="populateModal('{{ ride.pickup_id }}')" >
+                            Edit Pickup Location
+                        </button>
+                        
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#editLocationModal" data-type="dropoff"
+                            data-location-id={{ride.id}}
+                            onclick="populateModal('{{ride.dropoff_id}}')">
+                            Edit Dropoff Location
+                        </button>
+    
+                        <div class="modal fade" id="editLocationModal" tabindex="-1"
+                        aria-labelledby="editLocationModalLabel"
+                        aria-hidden="true">
+                       <div class="modal-dialog">
+                           <div class="modal-content">
+                               <div class="modal-header">
+                                   <h5 class="modal-title" id="modalTitle">Edit Location</h5>
+                                   <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                           aria-label="Close"></button>
+                               </div>
+                               <div class="modal-body">
+                                   <!-- Location search sugestion - input box-->
+                                   <h3>Search for a location</h3>
+                                   <input type="text" id="autocomplete" class="form-control" placeholder="Start typing pickup location..." autocomplete="off">
+                                   <br>
+               
+                                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    
+                                   <h3>Location Nickname</h3>
+                                   <input type="text" id="nickname" class="form-control mb-2"
+                                          placeholder="Nickname"
+                                          required>
+                                   <h3>Address Line 1</h3>
+                                   <input type="text" id="addressLine1" class="form-control mb-2"
+                                          placeholder="Address Line 1" required>
+                                   <h3>City</h3>
+                                   <input type="text" id="city" class="form-control mb-2" placeholder="City"
+                                          required>
+                                   <h3>Postcode</h3>
+                                   <input type="text" id="postcode" class="form-control mb-2" placeholder="Postcode"
+                                          required>
+                                   <h3>Country</h3>
+                                   <input type="text" id="country" class="form-control mb-2"
+                                          placeholder="Country"
+                                          required>
+                               </div>
+                               <div class="modal-footer">
+                                   <button type="button" class="btn btn-primary" id="edit_location_btn"
+                                           data-bs-dismiss="modal"
+                                           onclick="editLocation(this, '{{ride.id}}')">Confirm Location Edit
+                                   </button>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               
+                        <!-- Cancel Ride -->
+                        <form action="{{ url_for('cancel_journey', journey_id=ride['id']) }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-danger btn-sm">Cancel Journey</button>
+                        </form>
+                        {% endif %}
+    
+                        {% if ride.datetime <= todays_datetime and ride.journey_status != "CANCELLED" %}
+                            <a class="" href="{{ url_for('mark_as_complete', journey_id=ride['id'])}}"><button>Mark Ride As Complete</button></a>
+                        {% endif %}
+                        
+                        </div>
+                    {% else %}
+                        <div class="card border p-3 mb-3">
+                        <p>No upcoming drives.</p>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Your Rides (as a Passenger) -->
+            <div class="tab-pane fade {% if not driver %}show active{% endif %}" id="your_rides">
+                <div class="card shadow ">
+                    <h3>Your Rides</h3>
+                    <p>These are the upcoming rides you have booked.</p>
+                    
+                    {% for booking in user_bookings %}
+                    <div class="card border p-3 mb-3">
+                        <!-- STATUS TAGS -->
+                        {% if booking.booking_status == "PENDING" %}
+                            <p><button class="btn btn-warning btn-sm" disabled><strong>Status: </strong>Pending</button></p>
+                        {% endif %}
+
+                        {% if booking.booking_status == "DECLINED" %}
+                            <p><button class="btn btn-warning btn-sm" disabled><strong>Status: </strong>Declined</button></p>
+                        {% endif %}
+
+                        {% if booking.booking_status == "ACCEPTED" %}
+                            {% if booking.datetime < todays_datetime %}
+                                <p><button class="btn btn-success btn-sm" disabled><strong>Status: </strong>Ride In Progress</button></p>
+                            {% else %}
+                                <p><button class="btn btn-success btn-sm" disabled><strong>Status: </strong>Accepted</button></p>
+                            {% endif %}
+                        {% endif %}
+                        
+                        {% if booking.booking_status == "CANCELLED" %}
+                        <p><button class="btn btn-danger btn-sm" disabled><strong>Status: </strong>Cancelled</button></p>
+                        {% endif %}  
+                        
+                        <p><strong>Pickup:</strong> {{ booking.pickup_location }}</p>
+                        <p><strong>Dropoff:</strong> {{ booking.dropoff_location }}</p>
+                        <p><strong>Date:</strong> {{ booking.date }} @ {{ booking.time }}</p>
+                        <p><strong>Price:</strong> £{{ booking.price }}</p>
+                        <p><strong>Payment Status:</strong>{{ booking.payment_status }}</p>
+
+                        {% if booking.booking_status == "ACCEPTED" %}
+                        
+                        <!-- Alert At Pickup Location -->
+                        <form action="{{ url_for('alert_at_pickup_location', booking_id=booking.id)}}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button class="btn btn-info btn-sm">I am at the pickup location.</button>
+                        </form>
+
+                        <!-- Show Booking-->
+                        <button
+                        class="btn btn-danger btn-sm show-route-btn"
+                        data-pickup="{{ booking.pickup_location }}"
+                        data-dropoff="{{ booking.dropoff_location }}">Show Route</button>
+
+                        <!-- Cancel Booking -->
+                        <form action="{{ url_for('cancel_booking', booking_id=booking.id) }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-danger btn-sm">Cancel Booking</button>
+                        </form>
+
+                
+                    {% endif %}
+
+                    {% if booking.booking_status == "PENDING" or booking.booking_status == "DECLINED" %}
+                    <!-- Request New Price -->
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#configureCostModal" data-cost="{{ booking.price }}" data-booking-id="{{ booking.id }}" onclick="prefillCostAndID(this)">Configure Cost</button>
+                    <!---Modal Pop up form to configure cost -->
+                    <div class="modal fade" id="configureCostModal" tabindex="-1" aria-labelledby="configureCostModal" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="configureCost">Configure Ride Cost</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+            
+                                <div class="modal-body">
+
+                                    <p>Want to change the price? 
+                                        
+                                        You can change the price up until the driver accepts your booking request.
+                                        They may confirm or deny based on what price you choose. 
+                                        If denied, you may send a new request with a new price.
+                                    </p>
+            
+                                    <form action="" method="post" id="configureCost" class="p-4 border rounded shadow-sm bg-white">
+                                        {{ form.hidden_tag() }}
+                         
+                                        <div class="form-group">
+                                
+                                            £{{ form.cost(class_='form-control', id="costInput", placeholder="Choose a price (£)") }} 
+                                            {{ form.booking_id(type="hidden", id="bookingIDInput") }}
+                                            
+                                            {% for error in form.cost.errors %}
+                                                <div class="alert alert-danger" role="alert">
+                                                    [{{ error }}]
+                                                </div>
+                                            {% endfor %}   
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-success">Configure Cost</button>
+
+                                    </form>
+                                    
+            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cancel Booking -->
+                    <form action="{{ url_for('cancel_booking', booking_id=booking.id) }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button class="btn btn-danger btn-sm">Cancel Booking</button>
+                    </form>
+
+                    <!-- Show Booking-->
+                    <button
+                    class="btn btn-primary btn-sm show-route-btn"
+                    data-pickup="{{ booking.pickup_location }}"
+                    data-dropoff="{{ booking.dropoff_location }}">Show Route</button>
+
+                    {% endif %}
+                
+                    </div>
+                    {% else %}
+                    <div class="card border p-3 mb-3">
+                        <p>No upcoming rides.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side: Large Map -->
+    <div id="map-container">
+        <div id="map" data-pickup='{{ pickup_location | tojson }}' data-dropoff='{{ dropoff_location | tojson }}'></div>
+    </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgGXaoIUnKbcco5UWyPQjDkxnpiS1gWrY&libraries=geometry"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+{% endblock %}

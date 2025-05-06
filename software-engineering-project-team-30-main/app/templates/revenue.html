@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <h1>View Revenue</h1>
+    <form action="" method="post" name="RevenueSettings" class="p-4 border rounded shadow-sm bg-white">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <h3>Choose a time frame to view revenue for.</h3>
+            <label for="frame">Choose an Option:</label>
+            {{ form.timeframe(class="form-control") }}
+
+            {% for error in form.timeframe.errors %}
+                <div class="alert alert-danger" role="alert">
+                    [{{ error }}]
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <h3>Pick an end date for the timeframe view. </h3>
+            <label for="date">Choose an end date.</label>
+            {{ form.end_date(class="form-control") }}
+
+            {% for error in form.end_date.errors %}
+                <div class="alert alert-danger" role="alert">
+                    [{{ error }}]
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <h3>Choose what user type to view revenue for.</h3>
+            <label for="frame">Choose an Option:</label>
+            {{ form.revenue_type(class="form-control") }}
+
+            {% for error in form.revenue_type.errors %}
+                <div class="alert alert-danger" role="alert">
+                    [{{ error }}]
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <button type="submit" class="btn btn-primary btn-block" href="#">View</button>
+    </form>
+
+
+    {% if hide==False %}
+
+        <h5>Period total £{{ total }}</h5>
+
+        <div style="height: 50vh; width: 75%;">
+            <canvas id="revenueChart"></canvas>
+        </div>
+
+        <script>
+            const labels = {{ labels | tojson }};
+    
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue',
+                    backgroundColor: 'rgb(255, 0, 150)',
+                    borderColor: 'rgb(255, 0, 150)',
+                    data: {{ data | tojson }},
+                }]
+            };
+    
+            const config = {
+                type: 'line',
+                data: data,
+                options: { maintainAspectRatio: false }
+            };
+    
+            const myChart = new Chart(
+                document.getElementById('revenueChart'),
+                config
+            );
+    
+        </script>
+    {% endif %}
+
+{% endblock %}

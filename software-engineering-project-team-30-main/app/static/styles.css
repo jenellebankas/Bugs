@@ -1,0 +1,716 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Commissioner:wght@100..900&display=swap');
+
+
+
+/* General Styles */
+body {
+    font-family: "Commissioner", sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navigation Bar */
+.navbar {
+    background-color: #9f264c;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+}
+
+/* Left side of navbar (brand + links) */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Right side of navbar (logout + profile) */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Navbar links */
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+}
+
+.navbar a:hover{
+    color: black;
+}
+
+/* Profile Section */
+#profile-card {
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    text-align: center;
+}
+
+.profile-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+    margin: 20px auto;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Links */
+#profile-card a {
+    display: block;
+    margin: 10px 0;
+    color: #007bff;
+    text-decoration: none;
+}
+
+#profile-card a:hover {
+    text-decoration: underline;
+}
+
+/* Button Styling for Become a Driver */
+#profile-card .btn-primary {
+    background-color: #007bff;
+    color: white;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 16px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+#profile-card .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Previous Rides and Drives Section */
+.card {
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    margin-bottom: 15px;
+}
+
+.card a {
+    display: block;
+    margin: 10px 0;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.card a:hover {
+    text-decoration: underline;
+}
+
+.card .nav-tabs {
+    font-size: 16px;
+}
+
+/* Tab Content */
+.tab-content .card {
+    padding: 20px;
+}
+
+/* Left Side: Bookings Panel */
+#bookings-container {
+    flex: 0.4; /* Takes up about 40% of the space */
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Scrollable if needed */
+    max-height: 100%;
+    min-width: 350px; /* Prevents it from getting too small */
+    margin-right: 20px; /* Adds spacing between the bookings panel and the map */
+}
+
+/* Main container for layout */
+.container {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: auto;
+    padding: 1.5rem;
+    height: 90vh; /* Use most of the screen */
+    align-items: stretch; /* Ensures both sections expand properly */
+}
+
+/* Left Side: Bookings Panel */
+#bookings-container {
+    flex: 0.4; /* Takes up about 40% of the space */
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Scrollable if needed */
+    max-height: 100%;
+    min-width: 350px; /* Prevents shrinking too much */
+}
+
+/* Tabs */
+.nav-tabs {
+    font-size: 1.3rem; /* Bigger tabs */
+}
+
+/* Booking Cards */
+.card {
+    font-size: 1.2rem; /* Bigger text */
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Right Side: Map */
+#map-container {
+    flex: 1; /* Takes up the remaining space */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px; /* Ensures visibility */
+    position: relative;
+}
+
+/* The Map */
+#map {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    #bookings-container {
+        flex: none;
+        width: 100%;
+    }
+
+    #map-container {
+        flex: none;
+        width: 100%;
+        height: 400px; /* Smaller map for small screens */
+        margin-top: 10px;
+    }
+
+    #map {
+        min-height: 400px; /* Maintain map visibility */
+    }
+}
+
+/* Login Form */
+.login-container {
+    max-width: 500px;
+    margin: 100px auto;
+    background: white;
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.login-container h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 50px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Make form full width and consistent spacing */
+form[name="LoginPage"] .form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+form[name="LoginPage"] .form-control {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* Style the submit button */
+form[name="LoginPage"] button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form[name="LoginPage"] button[type="submit"]:hover {
+    background-color: #333;
+}
+
+/* Link styling */
+.login-container a {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: blue;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}
+
+/* Error message styling */
+.alert-danger {
+    width: 100%;
+    max-height: 10%;
+    font-size: 0.9rem;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 6px;
+}
+
+
+/* Input Group Styling */
+.input-group {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    display: block;
+    margin: 10px auto;
+}
+
+.input-group button:hover {
+    background-color: #0056b3;
+}
+
+#journey-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem;
+    gap: 2rem; 
+}
+
+.filter-form {
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Optional: make the filter fields more neat */
+.filter-group input,
+.filter-group select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* Make the filter button look clean */
+.filter-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: black;
+    color: white;
+    border: none;
+}
+
+.filter-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Center the button */
+.edit-profile-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block; /* Ensures it's a block element */
+    margin: 10px auto; /* Centers the button horizontally */
+}
+
+.edit-profile-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Header Styling */
+.edit-profile-container h1 {
+    font-family: 'Konkhmer Sleokchher', cursive;
+    text-align: center;
+}
+
+/* Input Fields */
+.edit-profile-container .input-group {
+    margin: 10px auto;
+    margin-bottom: 15px;
+}
+
+.edit-profile-container .input-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.edit-profile-container .input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Profile Page Containers */
+#profile-container-sm,
+#profile-container-lg {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1.5rem;
+    padding: 20px;
+}
+
+/* Grid Layout */
+@media (min-width: 900px) {
+    #profile-container-sm {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    #profile-container-lg {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+/* Profile Cards */
+.card {
+    background-color: #f0f0f0; /* Dark background */
+    color: black;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+/* Profile Card - Special Styling */
+#profile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+/* Profile Icon */
+.profile-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    color: white;
+    margin-bottom: 15px;
+}
+
+/* Profile */
+.emoji-circle {
+    display: inline-block;     
+    width: 40px;              
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+    text-align: center;
+    line-height: 40px;
+    font-size: 18px;
+}
+
+/* Profile Card Links */
+.card a {
+    font-size: 14px;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    color: #007bff;
+}
+
+.card a:hover {
+    text-decoration: underline;
+}
+
+/* Grid Container */
+#grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Location Suggestions */
+.pac-container {
+    z-index: 99999 !important; 
+}
+
+#location_row {
+    padding: 10px;
+    display: block;
+    position: relative;
+}
+
+#location_column {
+    padding: 10px;
+    max-width: 25%;
+    float: left;
+}
+
+/* Home Page Styling */
+.Logo
+{
+    background: linear-gradient(0deg, #ffffff, rgb(69, 69, 69),rgb(24, 24, 24), black);
+    text-align: center;
+}
+.Logo img
+{
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    margin: auto;
+    margin-top: -100px;
+    margin-bottom: -200px;
+}
+
+.home-hero {
+    text-align: center;
+    background: #ffffff;
+    color: black;
+}
+
+.home-hero h1 {
+    font-size: 40px;
+    margin-bottom: 30px;
+}
+
+.home-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    gap: 30px;
+}
+
+
+.home-image {
+    flex: 1;
+    max-width: 50%;
+}
+
+.home-image img {
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.home-text {
+    flex: 1;
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    text-align: left;
+    font-size: 20px;
+    color: black;
+
+}
+
+.home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.home-actions button {
+    background-color: rgb(54, 54, 54);
+    border: none;
+    padding: 15px 80px;
+    font-size: 15px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 500px;
+    max-width: 100%;
+}
+
+.home-actions button:hover {
+    background-color: black;
+}
+
+.About-us {
+    padding: 60px 30px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.About-us h2 {
+    font-size: 30px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.About-us p {
+    font-size: 20px;
+    width: 50%;
+    max-width: 1000px;
+    margin: 0 auto 50px;
+    color: black;
+    text-align: center;
+}
+
+.about-values {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.value-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 2000px;
+    gap: 25px;
+    text-align:justify;
+}
+
+.about-values .value-box p{
+    font-size: 20px;
+    margin: 50px;
+    flex: 1;
+}
+
+
+.about-values .value-box img {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.about-values .value-box h3 {
+    flex: 1;
+    color: black;
+}
+
+
+.Home-footer
+{
+    height: 150px;
+    background: linear-gradient(to right, #111, #333);
+    border-top: 4px solid #f2f2f2;
+    padding: 20px;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+
+}
+
+.Extra-info p
+{
+    color: white;
+    text-align: center;
+}
+.cardPayment-button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px; /* Space between the buttons */
+  }
+  
+  .cardPayment-custom-button {
+    flex: 1; /* Make both buttons grow equally */
+    min-width: 120px; /* Optional: Prevent them from getting too tiny on small screens */
+  }
+
+  .custom-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    width: 100%;
+    border-radius: 10px;
+  }
+  
+  .stripe-input {
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    background-color: white;
+  }
+  

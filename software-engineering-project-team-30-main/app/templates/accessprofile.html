@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:80vh;">
+    <div class="col-md-6">
+        <!-- <h1>Login Page</h1> -->
+        <h1 class="text-center mb-4">Input Password To Access Profile</h1>
+
+        <form action="" method="post" name="EditProfilePage" class="p-4 border rounded shadow-sm bg-white">
+            {{ form.hidden_tag() }}
+
+            <div class="input-group">
+                <h3>{{ form.password(class_='form-control', placeholder="Enter your password to access your profile") }} </h3>
+
+                {% for error in form.password.errors %}
+                <div class="alert alert-danger" role="alert">
+                    [{{ error }}]
+                </div>
+                {% endfor %}
+
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Edit profile</button><br>
+
+        </form>
+        <div class="text-center mt-3">
+            <a href="/profile"><h8>Go Back</h8></a><br>
+    </div>
+
+
+{% endblock %}

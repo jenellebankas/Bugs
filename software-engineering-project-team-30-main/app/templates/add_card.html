@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:80vh;">
+  <div class="card shadow p-4" style="width: 100%; max-width: 500px; border-radius: 20px;">
+    
+    <h1 class="text-center mb-4">Add a New Card</h1>
+
+    <form id="payment-form" action="{{ url_for('add_card', journey_id=journey_id, price=price) }}" method="POST">
+
+      <!-- Card Element Only -->
+      <div class="form-group mb-4">
+        <label for="card-element" class="form-label">Card Details</label>
+        <div id="card-element" class="stripe-input"></div>
+      </div>
+
+      <!-- Card Errors -->
+      <div id="card-errors" class="text-danger mb-3" role="alert"></div>
+
+      <!-- Hidden fields -->
+      <input type="hidden" name="stripeToken" id="stripeToken">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- Submit Button -->
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary custom-button">Submit Card</button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const stripe = Stripe("pk_test_51Qw2FeJcESkTiOzc9nQKLeMsY7McvUYLZJGG1YArhEgbZygtI78VtX0aBh1u5NwmVv4cDtQyVt1eOxQxvkPfKZQH00pJxg64rt");
+  const elements = stripe.elements();
+
+  const style = {
+    base: {
+      color: "#32325d",
+      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      fontSmoothing: "antialiased",
+      fontSize: "16px",
+      "::placeholder": {
+        color: "#aab7c4"
+      },
+      iconColor: "#666EE8"
+    },
+    invalid: {
+      color: "#fa755a",
+      iconColor: "#fa755a"
+    }
+  };
+
+  const card = elements.create("card", { style: style });
+  card.mount("#card-element");
+
+  card.addEventListener('change', function(event) {
+    const displayError = document.getElementById('card-errors');
+    if (event.error) {
+      displayError.textContent = event.error.message;
+    } else {
+      displayError.textContent = '';
+    }
+  });
+
+  const form = document.getElementById('payment-form');
+  form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const { token, error } = await stripe.createToken(card);
+
+    if (error) {
+      const errorElement = document.getElementById('card-errors');
+      errorElement.textContent = error.message;
+    } else {
+      document.getElementById('stripeToken').value = token.id;
+      form.submit();
+    }
+  });
+</script>
+
+{% endblock %}

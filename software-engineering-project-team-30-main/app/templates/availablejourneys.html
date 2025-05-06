@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="journey-container mt-4">
+    <h2 class="text-center">Available Journeys</h2>
+
+    <!-- FILTERS -->
+    <form action="" method="post" name="FilterJourneys" class="filter-form">
+        {{ form.hidden_tag() }}
+        <div class="filter-group">
+            <!-- Journey Date -->
+            Journey Date: {{ form.date }}
+            {% for error in form.date.errors %}
+            <div class="alert alert-danger" role="alert">
+                [{{ error }}]
+            </div>
+            {% endfor %}
+
+            <!-- Pickup Time -->
+            Pickup Time: {{ form.time }}
+            {% for error in form.time.errors %}
+            <div class="alert alert-danger" role="alert">
+                [{{ error }}]
+            </div>
+            {% endfor %}
+
+            <!-- Pickup Postcode -->
+            Pickup Postcode: {{ form.pickup_postcode }}
+            {% for error in form.pickup_postcode.errors %}
+            <div class="alert alert-danger" role="alert">
+                [{{ error }}]
+            </div>
+            {% endfor %}
+
+            <!-- Dropoff Postcode -->
+            Dropoff Postcode: {{ form.dropoff_postcode }}
+            {% for error in form.dropoff_postcode.errors %}
+            <div class="alert alert-danger" role="alert">
+                [{{ error }}]
+            </div>
+            {% endfor %}
+
+            <!-- Sort By -->
+            Sort By: {{ form.sort_by }}
+            {% for error in form.sort_by.errors %}
+            <div class="alert alert-danger" role="alert">
+                [{{ error }}]
+            </div>
+            {% endfor %}
+            
+            <!-- Button -->
+            <button type="submit" class="btn btn-primary btn-sm filter-btn">Filter</button>
+        </div>
+    </form>
+
+
+    {% if journeys %}
+
+        <!-- VIEW JOURNEYS -->
+        <div class="table-responsive">
+            <table class="table table-striped mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Pickup</th>
+                        <th>Dropoff</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Price (£)</th>
+                        <th>Seats Left</th>
+                        <th>Driver</th>
+                        <th>Car</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for journey in journeys %}
+                        <tr>
+                            <td>{{ journey.pickup_nickname }} - {{ journey.pickup_location }}</td>
+                            <td>{{ journey.dropoff_nickname }} - {{ journey.dropoff_location }}</td>
+                            <td>{{ journey.date }}</td>
+                            <td>{{ journey.time }}</td>
+                            <td>£{{ journey.price_per_person }}</td>
+                            <td>{{ journey.available_seats }}</td>
+                            <td>{{ journey.driver_name }}</td>
+                            <td>{{ journey.car.make }} {{ journey.car.model }} ({{ journey.car.reg_plate }})</td>
+                            <td>
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#configureCostModal" data-cost="{{journey.price_per_person}}" data-journey-id="{{journey.id}}" onclick="prefillCostAndID(this)">Book Now</button>
+                                <!---Modal Pop up form to configure cost -->
+                                <div class="modal fade" id="configureCostModal" tabindex="-1" aria-labelledby="configureCostModal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                        
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="configureCost">Configure Ride Cost</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                        
+                                            <div class="modal-body">
+
+                                                <p>Dont agree with the price the driver is charging? Choose your own. 
+                                                    The driver must confirm your spot on the ride, and may confirm or deny based on what price you choose. 
+                                                    If denied, you may send a new request with a new price.
+                                                </p>
+                        
+                                                <form action="" method="post" id="configureCost" class="p-4 border rounded shadow-sm bg-white">
+                                                    {{ form_cc.hidden_tag() }}
+                                     
+                                                    <div class="form-group">
+                                            
+                                                        £{{ form_cc.cost(class_='form-control', id="costInput", placeholder="Choose a price (£)") }} 
+                                                        {{ form_cc.journey_id(type="hidden", id="journeyIDInput") }}
+                                                       
+                                                        {% for error in form_cc.cost.errors %}
+                                                            <div class="alert alert-danger" role="alert">
+                                                                [{{ error }}]
+                                                            </div>
+                                                        {% endfor %}   
+                                                    </div>
+                                                    
+                                                    <button type="submit" class="btn btn-success btn-sm" name="submit_form_cc">Book Now</button>
+                                                    
+
+                                                </form>
+                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center mt-4">No available journeys.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+

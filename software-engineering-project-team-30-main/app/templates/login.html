@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Messages Div (for custom flash messages) -->
+<div class="messages"></div>
+
+<!-- Login Form -->
+<div class="login-container">
+  <h2>Login</h2>
+
+  <form action="" method="post" name="LoginPage">
+    {{ form.hidden_tag() }}
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      {{ form.email(class_='form-control', placeholder="Enter your email") }}
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      {{ form.password(class_='form-control', placeholder="Enter your password") }}
+    </div>
+
+    <button type="submit" style="width: 100%">Login</button>
+  </form>
+
+  <a href="/register" style="text-align: center;">Don't have an account? Register</a><br>
+  <a href="/reset_password_request" style="text-align: center;">Forgot password?</a>
+</div>
+
+<!-- Check if error_message exists and call showFlashMessage -->
+{% if error_message %}
+  <script>
+    showFlashMessage('{{ error_message }}', 'danger');
+  </script>
+{% endif %}
+
+{% endblock %}

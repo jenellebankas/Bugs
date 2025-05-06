@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="container" style="min-height:80vh;">
+        {% if locations %}
+            <div class="row g-4" id="location_row">
+                {% for location in locations %}
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3" id="location_column">
+                        <div class="card" id="location_{{ location.id }}" style="width: 18rem;">
+                            <div class="card-body">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <h3 class="card-title">{{ location.nickname }}</h3>
+                                <h4>{{ location.addressLine1 }}</h4>
+                                <h4>{{ location.city }}</h4>
+                                <h4>{{ location.country }}</h4>
+                                <h4>{{ location.postcode }}</h4>
+                                <div class="form-group mt-3">
+                                    <button class="btn btn-danger delete-btn" data-id="{{ location.id }}">Delete
+                                        Location
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="container-fluid">
+                <div class="card border p-3 mb-3">
+                    <p>No saved locations</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

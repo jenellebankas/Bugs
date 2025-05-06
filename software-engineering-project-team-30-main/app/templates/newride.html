@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- For the modal -->
+    <div class="modal fade" id="addLocationModal" tabindex="-1"
+         aria-labelledby="addLocationModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add a Location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Location search sugestion - input box-->
+                    <h3>Search for a location</h3>
+                    <input type="text" id="autocomplete" class="form-control" placeholder="Start typing pickup location..." autocomplete="off">
+                    <br>
+
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <h3>Location Nickname</h3>
+                    <input type="text" id="nickname" class="form-control mb-2"
+                           placeholder="Nickname"
+                           required>
+                    <h3>Address Line 1</h3>
+                    <input type="text" id="addressLine1" class="form-control mb-2"
+                           placeholder="Address Line 1" required>
+                    <h3>City</h3>
+                    <input type="text" id="city" class="form-control mb-2" placeholder="City"
+                           required>
+                    <h3>Postcode</h3>
+                    <input type="text" id="postcode" class="form-control mb-2" placeholder="Postcode"
+                           required>
+                    <h3>Country</h3>
+                    <input type="text" id="country" class="form-control mb-2"
+                           placeholder="Country"
+                           required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="add_location_btn"
+                            data-bs-dismiss="modal">Confirm New Location
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container d-flex justify-content-center align-items-center" style="min-height:80vh;">
+        <div class="col-md-6">
+            <h1>Create a Journey!</h1>
+            <p>Enter the details below</p>
+
+            <form action="/makejourney" method="post" name="MakeJourney" class="p-4 border rounded shadow-sm bg-white">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    <h3>What Day is your Journey?</h3>
+                    <label for="date">Choose a Journey Date:</label>
+                    {{ form.date(class="form-control") }}
+                    {% for error in form.date.errors %}
+                        <div class="alert alert-danger" role="alert">[{{ error }}]</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <h3>What Time is your Journey?</h3>
+                    <label for="time">Choose a Departure Time:</label>
+                    {{ form.time(class="form-control") }}
+                    {% for error in form.time.errors %}
+                        <div class="alert alert-danger" role="alert">[{{ error }}]</div>
+                    {% endfor %}
+                </div>
+                <br>
+                <div class="form-group">
+                    <h3> Choose a visited location or add another </h3>
+                    <!-- Pickup Location -->
+                    <h3>Pickup Location</h3>
+                    <div>
+                        {{ form.previous_pickup_location(id="previous_pickup_location", class="form-control") }}
+                        {% for error in form.previous_pickup_location.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                [{{ error }}]
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Dropoff Location -->
+                    <h3>Dropoff Location</h3>
+                    <div>
+                        {{ form.previous_dropoff_location(id="previous_dropoff_location", class="form-control")}}
+                        {% for error in form.previous_dropoff_location.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                [{{ error }}]
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#addLocationModal" data-type="dropoff">
+                        Add New Location to Pick From
+                    </button>
+                </div>
+                <br>
+                <!-- Journey Price -->
+                <div class="form-group">
+                    <h3>Price Per
+                        Person {{ form.price_per_person(class_='form-control', placeholder="Enter the journey price", type="number", step="0.50", min="0", pattern="^\d+(\.\d{1,2})?$") }} </h3>
+                    {% for error in form.price_per_person.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            [{{ error }}]
+                        </div>
+                    {% endfor %}
+
+                </div>
+                <!-- Car Selection -->
+                <div class="form-group">
+                    <h3>Which Car Would you like to use? </h3>
+                    {{ form.reg_plate(class="form-control") }}
+                    {% for error in form.reg_plate.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            [{{ error }}]
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- Journey Type -->
+                <div class="form-group">
+                    <h3>What type of journey is this? </h3>
+                    {{ form.journey_type(class="form-control", id="journeyType") }}
+                    {% for error in form.journey_type.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            [{{ error }}]
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- Submit -->
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-primary btn-block">Create Journey</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<!-- Scripts -->
+<!-- Google Places API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxTkJDjrK0jEaxUkTzAUy4ZuuzKskB8cI&libraries=places&callback=initAutocomplete" async defer></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}
+

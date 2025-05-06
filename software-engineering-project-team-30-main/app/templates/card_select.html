@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:80vh;">
+  <div class="card shadow p-4" style="width: 100%; max-width: 500px; border-radius: 20px;">
+    
+    <h1 class="text-center mb-4">Book Your Journey</h1>
+
+    <form action="{{ url_for('card_select', journey_id=journey_id, price=price)}}" method="POST">
+      <h3 class="mb-3 text-center">Choose Payment Method</h3>
+
+      {% if payment_methods %}
+        <div class="list-group mb-4">
+          {% for method in payment_methods %}
+            <label class="list-group-item d-flex align-items-center">
+              <input class="form-check-input me-2" type="radio" name="payment_method" value="{{ method.id }}" required>
+              <div>
+                <strong>{{ method.brand }}</strong> ending in {{ method.last4 }}, exp: {{ method.exp_date }}
+              </div>
+            </label>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-center text-muted mb-4">No saved cards found. Add a new card below.</p>
+      {% endif %}
+
+      <div class="cardPayment-button-group">
+        <a href="{{ url_for('add_card', journey_id=journey_id, price=price) }}" class="btn btn-outline-primary cardPayment-custom-button">
+          Add New Card
+        </a>
+      
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      
+        <button type="submit" class="btn btn-primary cardPayment-custom-button">
+          Confirm Booking
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

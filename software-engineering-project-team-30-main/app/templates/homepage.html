@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="Logo">
+        <img src= "{{ url_for('static', filename='images/Logo.png') }}" alt="Skrrt! Logo">
+    </div>
+    <section class="home-actions">
+        {% if current_user.is_authenticated %}
+            {% if not current_user.is_driver %}
+                <a href="{{ url_for('register_driver') }}"><button>Become a Driver</button></a>
+                <a href="{{ url_for('upcomingbookings') }}"><button>Your Bookings</button></a>
+            {% else %}
+                <a href="{{ url_for('make_journey') }}"><button>Create a New Journey</button></a>
+                <a href="{{ url_for('upcomingbookings') }}"><button>Your Bookings and Upcoming Journeys</button></a>
+            {% endif %}
+            <a href="{{ url_for('availableJourneys') }}"><button>Available Journeys</button></a>
+
+        {% else %}
+            <a href="{{ url_for('register') }}"><button>Join the Skrrt! Family Today</button></a>
+            <a href="{{ url_for('login') }}"><button>Already have an account? Log in!</button></a>
+        {% endif %}
+    </section>
+    <section class="home-hero">
+        <div class="home-content">
+            <div class="home-image ">
+                <img src="{{ url_for('static', filename='images/Taxi_home.jpg') }}" alt="Taxi Service Image">
+            </div>
+            <div class="home-text">
+
+                <h1>Experience the Greatest Taxi Service in All of Yorkshire</h1>
+                <h2>Reliable Drivers!</h2>
+                <h2>Flexible Rides!</h2>
+                <h2>Negotiable Prices!</h2>
+                <h2>Helpful Customer Support!</h2>
+                <h2>And family that wants to take care of all your travel needs</h2>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="About-us">
+        <h2> About Skrrt!</h2>
+        <p>Skrrt! is more than just a carpooling service — it's a community. We connect local drivers with passengers looking for safe, affordable, and reliable rides across Yorkshire.</p>
+        
+        <div class="about-values">
+            <div class="value-box">
+                <img src="{{ url_for('static', filename='images/Trust.png') }}" alt="Trust Icon">
+                <h3>Trusted Drivers</h3>
+                <p>All our drivers are verified and rated by passengers to ensure your safety and peace of mind.</p>
+            </div>
+            <div class="value-box">
+                <p>Whether it’s a last-minute lift or a planned journey, Skrrt! fits your schedule.</p>
+                <h3>Flexible Rides</h3>
+                <img src="{{ url_for('static', filename='images/Flexible.jpg') }}" alt="Flexibility Icon">
+
+            </div>
+            <div class="value-box">
+                <img src="{{ url_for('static', filename='images/Affordable.jpg') }}" alt="Savings Icon">
+                <h3>Affordable Travel</h3>
+                <p>Share costs with fellow riders and enjoy cheaper travel, wherever you're headed.</p>
+            </div>
+        </div>
+    </section>
+
+    <Section class="Home-footer">
+        <div class="Extra-info">
+            <p>Leah Chi, Jenelle, Tayshan, Jasmine, Callum, Morgan Harvey</p>
+            <P> Contact us on our support page or at Skrrrtlimited@gmail.com</P>
+        </div>
+    </Section>
+
+{% endblock %}

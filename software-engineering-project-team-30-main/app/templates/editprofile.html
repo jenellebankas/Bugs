@@ -1,0 +1,35 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="edit-profile-container">
+  <h1 class="text-center mb-4">Edit your Skrrt! Profile</h1>
+  <form action="" method="post" name="Register-Page">
+      {{ form.hidden_tag() }}
+
+      <div class="input-group">
+          <label for="first_name">First Name</label>
+          {{ form.first_name(class_='form-control', id='first_name', value=current_user.first_name) }}
+      </div>
+
+      <div class="input-group">
+          <label for="last_name">Last Name</label>
+          {{ form.last_name(class_='form-control', id='last_name', value=current_user.last_name) }}
+      </div>
+
+      <div class="input-group">
+          <label for="email">Email</label>
+          {{ form.email(class_='form-control', id='email', value=current_user.email) }}
+      </div>
+
+      <div class="input-group">
+          <label for="phone_number">Phone Number</label>
+          {{ form.phone_number(class_='form-control', id='phone_number', value=current_user.phone_number) }}
+      </div>
+
+      <button type="submit">Edit Profile</button>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:80vh;">
+    <div class="col-md-6">
+        <h1 class="text-center mb-4"> Contact our support team </h1>
+        <form action="" method="post" name="Support-Page" class="p-4 border rounded shadow-sm bg-white">
+            {{ form.hidden_tag() }}
+
+            <P> If you have any issues involving your account, booking, journey please send us an email and we will reply to the email you have provided as soon as we can. we look forward to hearing from you</P>
+            <div class="form-group">
+                <label for="name">Name</label>
+                {{ form.name(class_='form-control', id='name', value = current_user.first_name ~ ' ' ~ current_user.last_name) }}
+
+                {% for error in form.name.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            </div>
+
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                {{ form.email(class_='form-control', id='email', value = current_user.email) }}
+
+                {% for error in form.email.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            </div>
+
+
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                {{ form.subject(class_='form-control', id='Subject') }}
+
+                {% for error in form.subject.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            </div>
+
+
+            <div class="form-group">
+                <label for="message">Message</label>
+                {{ form.message(class_='form-control', id='message') }}
+
+                {% for error in form.message.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Submit your message</button><br>
+
+
+
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

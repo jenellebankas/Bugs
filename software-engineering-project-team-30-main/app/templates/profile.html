@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <!-- For the driver viewing user review modal -->
+    <div class="modal fade" id="viewReviewModal" tabindex="-1"
+         aria-labelledby="viewReviewModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Journey Reviews</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="reviews_list">
+                        <!-- dynamic card addition -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- For the user making review modal -->
+    <div class="modal fade" id="makeReviewModal" tabindex="-1"
+         aria-labelledby="makeReviewModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Journey Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <h3>Review Title</h3>
+                    <input type="text" id="review_title" class="form-control mb-2"
+                           placeholder="Title">
+                    <h3>Comment</h3>
+                    <textarea type="text" id="comment" class="form-control mb-2"
+                              placeholder="Comment"></textarea>
+                    <h3>Rating</h3>
+                    <input type="number" id="rating" class="form-control mb-2" min="1" max="5" required step="1"
+                           placeholder="Rate your Ride!">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="add_review_btn"
+                            data-bs-dismiss="modal"> Send Review
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <div class="cards" id="profile-container-sm">
+            <div class="card" id="profile-card">
+                <h1>{{ current_user.first_name }}</h1>
+
+            <!--General Settings-->
+            <div class="profile-icon">👤</div> <!-- Placeholder icon -->
+            <a href='/accessprofile'>Edit Profile Info</a>
+
+            <a data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</a>
+                    <!---Modal Pop up form to configure availability -->
+                    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModal" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="configureCost">Change Password</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <form action="" method="post" id="configureCost" class="p-4 border rounded shadow-sm bg-white">
+                                        {{ form_p.hidden_tag() }}
+
+                                        <div class="form-group">
+                                            <h3>Current Password</h3>
+                                            {{ form_p.old_password(class_='form-control', placeholder="Current Password") }}
+
+                                            {% for error in form_p.old_password.errors %}
+                                                <div class="alert alert-danger" role="alert">
+                                                    [{{ error }}]
+                                                </div>
+                                            {% endfor %}
+
+                                        </div>
+
+                                        <div class="form-group">
+
+                                            <h3>New Password</h3>
+                                            {{ form_p.new_password(class_='form-control', placeholder="New Password") }}
+
+                                            {% for error in form_p.new_password.errors %}
+                                                <div class="alert alert-danger" role="alert">
+                                                    [{{ error }}]
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        <button type="submit" class="btn btn-success btn-block" name="submit_form_p" >Change Password</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            <a href={{ url_for('logout') }}>Sign Out</a>
+            <a href="/deleteaccount" style="color: red;">Delete Account!</a>
+
+
+            </div>
+
+            <!--View driver credit paid from bookings.-->
+            {% if current_user.is_driver %}
+                <div class="card" id="profile-card">
+
+                <!--Driver Settings-->
+                <h1>Driver Settings</h1>
+                    <h5><strong>Driver Rating: {{ driver.driver_rating }} ⭐</strong></h5>
+                <a style="color: green;">Current Status: {{driver.driver_status}}</a>
+                <a href="{{ url_for('newcar') }}">Add New Car</a>
+                <a href="{{ url_for('delete_saved_location') }}">Previously Saved Locations</a>
+
+                {% if driver.driver_status != "ACTIVE" %}
+
+                    <a href="{{ url_for('set_driver_available', driver_id=current_user.driver_id) }}">Set Status as Active</a>
+                {% else %}
+
+                    <a data-bs-toggle="modal" data-bs-target="#changeAvailabilityModal">Set Status as Unavailable</a>
+                    <!---Modal Pop up form to configure availability -->
+                    <div class="modal fade" id="changeAvailabilityModal" tabindex="-1" aria-labelledby="changeAvailabilityModal" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="configureCost">Change Driver Availability</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <p>Changing your status will set your drives to inactive for that period,
+                                        and cancel any bookings which are made onto your journeys.</p>
+
+                                    <form action="" method="post" id="configureCost" class="p-4 border rounded shadow-sm bg-white">
+                                        {{ form.hidden_tag() }}
+
+                                        <div class="form-group">
+                                            <h3>Reason</h3>
+                                            {{ form.availability_status(class_='form-control', placeholder="Choose a Reason for being unavailable") }}
+
+                                            {% for error in form.availability_status.errors %}
+                                                <div class="alert alert-danger" role="alert">
+                                                    [{{ error }}]
+                                                </div>
+                                            {% endfor %}
+
+                                        </div>
+
+                                        <div class="form-group">
+
+                                            <h3>Last Date of Unavailablility Period</h3>
+                                            {{ form.end_date(class_='form-control', placeholder="Choose an end date") }}
+
+                                            {% for error in form.end_date.errors %}
+                                                <div class="alert alert-danger" role="alert">
+                                                    [{{ error }}]
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+
+
+                                        <button type="submit" class="btn btn-success btn-block" name="submit_form_a">Change Availability</button>
+
+
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <a class="" href="{{ url_for('revenue')}}">View Revenue</a>
+
+                </div>
+
+        {% else %}
+        <!--Become a driver-->
+            <div class="card" id="profile-card">
+                <h1>Become a Driver</h1>
+
+                <p>Want to become a driver? Apply here. <i>Be prepared with your drivers liscence and car details.</i></p>
+                <a class="btn btn-primary" href={{ url_for('register_driver') }}>Register Here</a>
+
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+    <!-- Previous Bookings and Drives ------------------------------>
+
+
+<div class="container mt-3">
+    <h1 class="text-center">Your History</h1>
+
+    <ul class="nav nav-tabs" id="booking_tabs">
+        {% if driver %}
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#your_drives">Previous Drives {% if driver_rides %}({{driver_rides|length}}){%endif%}</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+            <a class="nav-link {% if not driver %}active{% endif %}" data-bs-toggle="tab" href="#your_rides">Previous Rides {% if user_bookings %}({{user_bookings|length}}){%endif%}</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-2">
+        {% if current_user.is_driver %}
+
+        <!-- Previous Journeys Drives (as a Driver) -->
+        <div class="tab-pane fade show active" id="your_drives">
+            <div class="card shadow p-3">
+                <h3>Previous Drives</h3>
+                <p>These are the previous journeys you have created.</p>
+
+                {% for ride in driver_rides %}
+                    <div class="card border p-3 mb-3">
+                    <p><strong>Pickup: </strong>{{ ride.pickup_nickname }} -  {{ ride.pickup_location }}</p>
+                    <p><strong>Dropoff: </strong>{{ ride.dropoff_nickname }} -  {{ ride.dropoff_location }}</p>
+                    <p><strong>Departed At:</strong> {{ ride.date }} @ {{ ride.time }} </p>
+                    <p><strong>Passengers Driven:</strong> {{ ride.num_confirmed }}</p>
+
+                        <div>
+                            <button type="button" id="show_booking_btn" data-bs-target="#viewReviewModal"
+                                    data-bs-toggle="modal" data-journey-id="{{ ride.id }}">View Reviews
+                            </button>
+                        </div>
+                    </div>
+
+                {% else %}
+                    <div class="card border p-3 mb-3">
+                    <p>No previous drives.</p>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Your Rides (as a Passenger) -->
+        <div class="tab-pane fade {% if not driver %}show active{% endif %}" id="your_rides">
+            <div class="card shadow p-3">
+                <h3>Your Previous Rides</h3>
+                <p>These are the previous rides you have booked.</p>
+
+                {% if user_bookings %}
+                {% for booking in user_bookings %}
+
+                    <div class="card border p-3 mb-3">
+
+                    {% if booking.booking_status == "ACCEPTED" %}
+                        <p><button class="btn btn-success btn-sm" disabled><strong>Status: </strong>Accepted</button></p>
+                    {% endif %}
+
+                    {% if booking.booking_status == "CANCELLED" %}
+                        <p><button class="btn btn-danger btn-sm" disabled><strong>Status: </strong>Cancelled</button></p>
+                    {% endif %}
+
+                            <p><strong>Pickup: </strong>{{ booking.pickup_nickname }} - {{ booking.pickup_location }}
+                            </p>
+                            <p><strong>Dropoff: </strong>{{ booking.dropoff_nickname }} - {{ booking.dropoff_location }}
+                            </p>
+                            <p><strong>Date:</strong> {{ booking.date }} @ {{ booking.time }}</p>
+                            <p><strong>Price:</strong> £{{ booking.price }}</p>
+
+                            <div>
+
+                                <button type="button" id="add_booking_id_btn"
+                                        data-bs-toggle="modal" data-bs-target="#makeReviewModal"
+                                        data-booking-id="{{ booking.id }}" {% if booking.reviewed %}
+                                        style="display:none;" {% endif %}>Add Review
+                                </button>
+
+                            </div>
+                        </div>
+                    {% else %}
+
+                        <div class="card border p-3 mb-3">
+                            <p>No previous rides.</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>You have not booked any rides yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
