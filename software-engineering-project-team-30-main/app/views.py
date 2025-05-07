@@ -968,7 +968,7 @@ def availableJourneys():
             journeys = journeys.filter(Location.postcode.ilike(f"%{dropoff_postcode[:outward_dropoff]}%"))
 
         # filter by commute or one time
-        if type:
+        if type != "ALL":
             journeys = journeys.filter(Journey.journey_type == type)
 
         #sort by rating or datetime
