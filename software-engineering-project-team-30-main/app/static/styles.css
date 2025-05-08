@@ -135,6 +135,7 @@ body {
     overflow-y: auto; /* Scrollable if needed */
     max-height: 100%;
     min-width: 350px; /* Prevents it from getting too small */
+    max-width: 350px;
     margin-right: 20px; /* Adds spacing between the bookings panel and the map */
 }
 
@@ -692,12 +693,12 @@ button:hover {
 .cardPayment-button-group {
     display: flex;
     justify-content: space-between;
-    gap: 15px; /* Space between the buttons */
+    gap: 15px; 
   }
   
   .cardPayment-custom-button {
-    flex: 1; /* Make both buttons grow equally */
-    min-width: 120px; /* Optional: Prevent them from getting too tiny on small screens */
+    flex: 1; 
+    min-width: 120px; 
   }
 
   .custom-button {
@@ -721,4 +722,92 @@ button:hover {
     display: block;
     margin-bottom: 15px;
 }
+
+.full-page-container {
+    min-height: 100vh;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    background-color: #f9f9f9; /* subtle background */
+}
+
+.signup-form-container {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    padding: 2rem;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* reduced shadow */
+}
+
+.signup-form-group label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.signup-btn {
+    padding: 10px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.signup-error {
+    margin-top: 5px;
+}
+
+.signup-link a {
+    color: #0d6efd;
+    font-weight: 500;
+    text-decoration: none;
+}
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* Profile tabs Styling */
+/* Container for vertical tab layout */
+#booking_tabs_wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  /* Vertical nav-tabs */
+  #booking_tabs {
+    flex-direction: column;
+    min-width: 200px;
+    border-right: 1px solid #ddd;
+    padding-right: 1rem;
+  }
+  
+  /* Style each tab like a card */
+  #booking_tabs .nav-link {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+    background-color: white;
+    color: #000;
+    text-align: left;
+  }
+  
+  #booking_tabs .nav-link.active {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    border-color: #0d6efd;
+    color: #0d6efd;
+  }
+  
+  /* Style the content area */
+  .tab-content {
+    flex-grow: 1;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+  }
+  
+  /* Keep the individual history cards clean */
+  .tab-content .card {
+    background-color: white;
+    border: 1px solid #ccc;
+  }
   

@@ -358,12 +358,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const mapTabTriggerElements = document.querySelectorAll('a[data-bs-toggle="tab"]');
+
+    mapTabTriggerElements.forEach(function (tab) {
+        tab.addEventListener('shown.bs.tab', function () {
+            if (window.google && window.map) {
+                google.maps.event.trigger(window.map, 'resize');
+            }
+        });
+    });
+});
+
+
 function initMap() {
     const defaultCenter = { lat: 51.5074, lng: -0.1278 }; // London
     map = new google.maps.Map(document.getElementById("map"), {
         center: defaultCenter,
         zoom: 5,
     });
+    window.map = map;
 
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer();

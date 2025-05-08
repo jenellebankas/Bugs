@@ -1,65 +1,53 @@
-
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height:80vh;">
-    <div class ="col-md-6">
+<div class="full-page-container d-flex justify-content-center align-items-center">
+  <div class="signup-form-container">
 
-    <h1>Register to Drive!</h1>
-    <p>Enter your details below.</p>
+    <h1 class="text-center mb-3">Register to Drive</h1>
+    <p class="text-center mb-4">Enter your details below to get started.</p>
 
-        <form action="" method="post" name="CarRegistration" class="p-4 border rounded shadow-sm bg-white">
-            {{ form.hidden_tag() }}
+    <form action="" method="post" name="CarRegistration">
+      {{ form.hidden_tag() }}
 
-            <div class="input-group">
-                <h3> Driver Licence Number {{ form.liscence_num(class_='form-control', placeholder="Enter your driver's licence number") }} </h3>
+      <div class="signup-form-group mb-3">
+        <label for="liscence_num">Driver Licence Number</label>
+        {{ form.liscence_num(class_='form-control', placeholder="Enter your driver's licence number") }}
+      </div>
 
-                </div>
+      <div class="signup-form-group mb-3">
+        <label for="reg_plate">Registration Plate</label>
+        {{ form.reg_plate(class_='form-control', placeholder="Enter your car reg plate") }}
+      </div>
 
-            <div class="input-group">
+      <div class="signup-form-group mb-3">
+        <label for="make">Car Manufacturer</label>
+        {{ form.make(class_='form-control', placeholder="Enter your car manufacturer") }}
+      </div>
 
-            <h3>Registration Plate {{ form.reg_plate(class_='form-control', placeholder="Enter your car reg plate") }} </h3>
+      <div class="signup-form-group mb-3">
+        <label for="model">Model</label>
+        {{ form.model(class_='form-control', placeholder="Enter car model") }}
+      </div>
 
-            </div>
+      <div class="signup-form-group mb-3">
+        <label for="colour">Car Colour</label>
+        {{ form.colour(class_='form-control', placeholder="Enter your car colour") }}
+      </div>
 
-            <div class="input-group">
+      <div class="signup-form-group mb-3">
+        <label for="car_nickname">Car Nickname</label>
+        {{ form.car_nickname(class_='form-control', placeholder="Enter a memorable nickname for your car") }}
+      </div>
 
-                <h3>Car Manufacturer {{ form.make(class_='form-control', placeholder="Enter your car manufacturer") }} </h3>
+      <div class="signup-form-group mb-4">
+        <label for="max_seats">Available Seats</label>
+        {{ form.max_seats(class_='form-control', placeholder="Enter the max number of passengers that can be driven.") }}
+      </div>
 
-            </div>
-
-
-            <div class="input-group">
-
-            <h3>Model {{ form.model(class_='form-control', placeholder="Enter car model") }} </h3>
-
-
-            </div>
-
-
-            <div class="input-group">
-
-                <h3>Car Colour {{ form.colour(class_='form-control', placeholder="Enter your car colour") }} </h3>
-
-
-            </div>
-
-            <div class="input-group">
-
-                    <h3>Car Nickname {{ form.car_nickname(class_='form-control', placeholder="Enter a memorable nickname for your car") }} </h3>
-
-                </div>
-
-            <div class="input-group">
-
-                <h3>Available Seats {{ form.max_seats(class_='form-control', placeholder="Enter the max number of passengers that can be driven.") }} </h3>
-
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-block">Register</button><br>
-            
-        </form>
-</div>
+      <button type="submit" class="btn btn-primary signup-btn w-100">Register</button>
+    </form>
+  </div>
 </div>
 
 {% if error_message %}
@@ -68,6 +56,4 @@
   </script>
 {% endif %}
 
-
 {% endblock %}
-
