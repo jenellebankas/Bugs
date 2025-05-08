@@ -691,11 +691,11 @@ def make_journey():
 
         selected_datetime = datetime.combine(journey_date, journey_time)
         min_allowed_datetime = datetime.now() + timedelta(hours=1)  # One hour from now
-        '''
+        
         if selected_datetime < min_allowed_datetime:
             flash("Journey must be at least one hour in the future!", "danger")
             return render_template('newride.html', form=form, previous_locations=previous_locations)
-        '''
+    
         # need to batch add bookings based off of form input for the daily and weekly buttons
         # repeat the booking for times into the future (so month in advance) might change this
 
