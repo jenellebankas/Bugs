@@ -552,7 +552,7 @@ def edit_location(location_id, journey_id):
     data = request.json
     location = Location.query.get(location_id)
 
-    app.logger.info("Editting location")
+    app.logger.info("Editing location")
     if location:
         try:
             location.nickname = data.get('nickname')
@@ -560,6 +560,7 @@ def edit_location(location_id, journey_id):
             location.city = data.get('city')
             location.postcode = data.get('postcode')
             location.country = data.get('country')
+
 
             db.session.commit()
             app.logger.info("Success")
@@ -653,24 +654,31 @@ def make_journey():
     # checking if there are previous_locations
     previous_locations = Location.query.filter_by(driver_id=current_driver).all()
 
-    form.reg_plate.choices = [(car.reg_plate, car.car_nickname) for car in cars]
-
     # make sure that the choices can be appended to something
     form.previous_pickup_location.choices = []
     form.previous_dropoff_location.choices = []
 
-    form.previous_pickup_location.choices = [(location.id, location.nickname) for location in previous_locations]
-    form.previous_dropoff_location.choices = [(location.id, location.nickname) for location in previous_locations]
+    if previous_locations:
+        form.previous_pickup_location.choices = [(location.id, location.nickname) for location in previous_locations]
+        form.previous_dropoff_location.choices = [(location.id, location.nickname) for location in previous_locations]
+    else:
+        form.previous_pickup_location.choices.append((None, "No Locations Saved Yet"))
+        form.previous_dropoff_location.choices.append((None, "No Locations Saved Yet"))
+
+
+    form.reg_plate.choices = [(car.reg_plate, car.car_nickname) for car in cars]
+
+
 
     if form.validate_on_submit():
+
+        if (not form.previous_pickup_location.data or not form.previous_dropoff_location.data):
+            flash("You must select or create a new location for pickup and/or drop off", "danger")
+            return render_template('newride.html', title="New Journey", form=form)
 
         # check if previous_pickup and dropoff are the same
         if (form.previous_pickup_location.data == form.previous_dropoff_location.data):
             flash("Start and end location cannot be the same", "danger")
-            return render_template('newride.html', title="New Journey", form=form)
-
-        if(not form.previous_pickup_location.data or not form.previous_dropoff_location.data):
-            flash("You must select or create a new location for pickup and/or drop off", "danger")
             return render_template('newride.html', title="New Journey", form=form)
 
         pickup_location = form.previous_pickup_location.data
@@ -681,11 +689,11 @@ def make_journey():
 
         selected_datetime = datetime.combine(journey_date, journey_time)
         min_allowed_datetime = datetime.now() + timedelta(hours=1)  # One hour from now
-
+        
         if selected_datetime < min_allowed_datetime:
             flash("Journey must be at least one hour in the future!", "danger")
             return render_template('newride.html', form=form, previous_locations=previous_locations)
-
+    
         # need to batch add bookings based off of form input for the daily and weekly buttons
         # repeat the booking for times into the future (so month in advance) might change this
 
@@ -910,6 +918,8 @@ def availableJourneys():
         input_time_str = request.form.get('time')
         pickup_postcode = request.form.get('pickup_postcode')
         dropoff_postcode = request.form.get('dropoff_postcode')
+        type = request.form.get('j_type')
+
         sort_by = request.form.get('sort_by', 'time')  # Default sorting by time
 
         #filter by date
@@ -939,11 +949,22 @@ def availableJourneys():
             )
 
         #filter by postcode
+
+        # for UK postcodes last three digits always inward code so using outward
+
         if pickup_postcode:
-            journeys = journeys.filter(Location.postcode.ilike(f"%{pickup_postcode}%"))
+            pickup_postcode = pickup_postcode.strip().upper()
+            outward_pickup = len(pickup_postcode) - 3
+            journeys = journeys.filter(Location.postcode.ilike(f"%{pickup_postcode[:outward_pickup]}%"))
 
         if dropoff_postcode:
-            journeys = journeys.filter(Location.postcode.ilike(f"%{dropoff_postcode}%"))
+            dropoff_postcode = dropoff_postcode.strip().upper()
+            outward_dropoff = len(dropoff_postcode) - 3
+            journeys = journeys.filter(Location.postcode.ilike(f"%{dropoff_postcode[:outward_dropoff]}%"))
+
+        # filter by commute or one time
+        if type != "ALL":
+            journeys = journeys.filter(Journey.journey_type == type)
 
         #sort by rating or datetime
         if sort_by == 'rating':
@@ -1323,13 +1344,13 @@ def cancel_booking(booking_id):
     current_datetime = datetime.now()
     
     #only remove people if their booking waa confirmed
-    if booking.booking_status == BookingStatusEnum.CONFIRMED:
+    if booking.booking_status == BookingStatusEnum.ACCEPTED:
         journey.num_confirmed -= 1
 
     if journey.journey_status == JourneyStatusEnum.FULL:
         journey.journey_status == JourneyStatusEnum.WAITING
 
-    if booking.booking_status == "ACCEPTED":
+    if booking.booking_status == BookingStatusEnum.ACCEPTED:
         if  journey_datetime - timedelta(minutes=15) >  current_datetime:
             refund(booking.id, late=False)
             flash("booking has been succesfully cancelled for free", 'success')
@@ -1341,6 +1362,7 @@ def cancel_booking(booking_id):
     booking.booking_status = BookingStatusEnum.CANCELLED
     db.session.commit()
     return redirect(url_for('upcomingbookings'))
+
 
 @app.route('/cancel-journey/<int:journey_id>', methods=['POST'])
 @login_required
@@ -1362,7 +1384,6 @@ def cancel_journey(journey_id):
 
             #cancel all bookings on journey
             for b in bookings_on_journey:
-                refund(b.id, late=False)
                 cancel_booking(b.id)
 
             #cancel journey
@@ -2034,12 +2055,39 @@ def refund(booking_id, late = False):
     try:
         booking = Booking.query.filter_by(id=booking_id).first()
         payment_intent = stripe.PaymentIntent.retrieve(booking.payment_intent_id)
-        charge_id = payment_intent.charges.data[0].id
+        charge_id = payment_intent.latest_charge
+        
+        j = Journey.query.get(booking.journey_id)
+        pickup_location = format_location_name(j.pickup_location)
+        dropoff_location = format_location_name(j.dropoff_location)
+        dropoff_nickname = format_location_nickname(j.dropoff_location)
         if late:
             amount = int(round(booking.price*25)) # Convert a quarter into int in pence for stripe
-            refund = stripe.Refund.create(charge_id, amount=amount)
+            stripe.Refund.create(charge=charge_id, amount=amount)
+            email_body = (
+                f"You have cancelled your journey,\n"
+                f"From {pickup_location}, To {dropoff_location} on {j.date} @ {j.time}.\n"
+                f"Due to cancelling within 15 minutes of the pickup time, you will only receive a partial refund.\n"
+                f"We hope you book with us again.\n\n- The Team @ Skrrt"
+            )
+            
         else:
-            refund = stripe.Refund.create(charge_id)
+            stripe.Refund.create(charge=charge_id)
+            email_body = (
+                f"You have cancelled your journey,\n"
+                f"From {pickup_location}, To {dropoff_location} on {j.date} @ {j.time}.\n"
+                f"A full refund will be provided to you.\n"
+                f"We hope you book with us again.\n\n- The Team @ Skrrt"
+            )
+            
+        booking.payment_status = PaymentStatusEnum.REFUNDED
+        
+        message = EmailMessage(
+            subject=f"Booking Cancellation - Journey to {dropoff_nickname}",
+            body=email_body,
+            to=[current_user.email]  
+        )
+        message.send()
         booking.payment_status = PaymentStatusEnum.REFUNDED
         db.session.commit()
 
