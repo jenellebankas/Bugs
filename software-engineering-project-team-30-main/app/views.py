@@ -500,8 +500,6 @@ def add_location():
     city = data.get("city")
     postcode = data.get("postcode")
 
-    formatted_postcode = postcode.upper()
-
     # Validate input
     if not all([nickname, addressLine1, country, city, postcode]):
         return jsonify({"success": False, "error": "Missing required fields"}), 400
@@ -510,7 +508,7 @@ def add_location():
         driver_id=current_user.driver_id,
         nickname=nickname,
         address_line_1=addressLine1,
-        postcode=formatted_postcode,
+        postcode=postcode,
         city=city,
         country=country
     ).first()
@@ -523,7 +521,7 @@ def add_location():
         driver_id=current_user.driver_id,
         nickname=nickname,
         address_line_1=addressLine1,
-        postcode=formatted_postcode,
+        postcode=postcode,
         city=city,
         country=country
     )
@@ -562,7 +560,7 @@ def edit_location(location_id, journey_id):
             location.nickname = data.get('nickname')
             location.address_line_1 = data.get('addressLine1')
             location.city = data.get('city')
-            location.postcode = data.get('postcode').upper()
+            location.postcode = data.get('postcode')
             location.country = data.get('country')
 
 
