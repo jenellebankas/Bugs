@@ -957,13 +957,12 @@ def availableJourneys():
         # for UK postcodes last three digits always inward code so using outward
 
         if pickup_postcode:
-            pickup_postcode = pickup_postcode.strip()
+            pickup_postcode = pickup_postcode.strip().upper()
             outward_pickup = len(pickup_postcode) - 3
-            app.logger.info(pickup_postcode[:outward_pickup])
             journeys = journeys.filter(Location.postcode.ilike(f"%{pickup_postcode[:outward_pickup]}%"))
 
         if dropoff_postcode:
-            dropoff_postcode = dropoff_postcode.strip()
+            dropoff_postcode = dropoff_postcode.strip().upper()
             outward_dropoff = len(dropoff_postcode) - 3
             journeys = journeys.filter(Location.postcode.ilike(f"%{dropoff_postcode[:outward_dropoff]}%"))
 
