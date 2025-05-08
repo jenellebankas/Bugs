@@ -1386,7 +1386,6 @@ def cancel_journey(journey_id):
 
             #cancel all bookings on journey
             for b in bookings_on_journey:
-                refund(b.id, late=False)
                 cancel_booking(b.id)
 
             #cancel journey
