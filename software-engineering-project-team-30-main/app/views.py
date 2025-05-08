@@ -1259,7 +1259,7 @@ def accept_booking(booking_id):
 
     try:
         payment_intent = stripe.PaymentIntent.retrieve(booking.payment_intent_id)
-
+ 
         #Check if payment intent has expired
         if payment_intent.status == "canceled" and payment_intent.cancellation_reason == "payment_intent_expired":
             #Renew payment
@@ -1325,13 +1325,13 @@ def cancel_booking(booking_id):
     current_datetime = datetime.now()
     
     #only remove people if their booking waa confirmed
-    if booking.booking_status == BookingStatusEnum.CONFIRMED:
+    if booking.booking_status == BookingStatusEnum.ACCEPTED:
         journey.num_confirmed -= 1
 
     if journey.journey_status == JourneyStatusEnum.FULL:
         journey.journey_status == JourneyStatusEnum.WAITING
 
-    if booking.booking_status == "ACCEPTED":
+    if booking.booking_status == BookingStatusEnum.ACCEPTED:
         if  journey_datetime - timedelta(minutes=15) >  current_datetime:
             refund(booking.id, late=False)
             flash("booking has been succesfully cancelled for free", 'success')
@@ -2036,12 +2036,12 @@ def refund(booking_id, late = False):
     try:
         booking = Booking.query.filter_by(id=booking_id).first()
         payment_intent = stripe.PaymentIntent.retrieve(booking.payment_intent_id)
-        charge_id = payment_intent.charges.data[0].id
+        charge_id = payment_intent.latest_charge
         if late:
             amount = int(round(booking.price*25)) # Convert a quarter into int in pence for stripe
-            refund = stripe.Refund.create(charge_id, amount=amount)
+            refund = stripe.Refund.create(charge=charge_id, amount=amount)
         else:
-            refund = stripe.Refund.create(charge_id)
+            refund = stripe.Refund.create(charge=charge_id)
         booking.payment_status = PaymentStatusEnum.REFUNDED
         db.session.commit()
 
