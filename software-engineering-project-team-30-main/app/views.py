@@ -554,7 +554,7 @@ def edit_location(location_id, journey_id):
     data = request.json
     location = Location.query.get(location_id)
 
-    app.logger.info("Editting location")
+    app.logger.info("Editing location")
     if location:
         try:
             location.nickname = data.get('nickname')
@@ -562,6 +562,7 @@ def edit_location(location_id, journey_id):
             location.city = data.get('city')
             location.postcode = data.get('postcode')
             location.country = data.get('country')
+
 
             db.session.commit()
             app.logger.info("Success")
@@ -655,24 +656,31 @@ def make_journey():
     # checking if there are previous_locations
     previous_locations = Location.query.filter_by(driver_id=current_driver).all()
 
-    form.reg_plate.choices = [(car.reg_plate, car.car_nickname) for car in cars]
-
     # make sure that the choices can be appended to something
     form.previous_pickup_location.choices = []
     form.previous_dropoff_location.choices = []
 
-    form.previous_pickup_location.choices = [(location.id, location.nickname) for location in previous_locations]
-    form.previous_dropoff_location.choices = [(location.id, location.nickname) for location in previous_locations]
+    if previous_locations:
+        form.previous_pickup_location.choices = [(location.id, location.nickname) for location in previous_locations]
+        form.previous_dropoff_location.choices = [(location.id, location.nickname) for location in previous_locations]
+    else:
+        form.previous_pickup_location.choices.append((None, "No Locations Saved Yet"))
+        form.previous_dropoff_location.choices.append((None, "No Locations Saved Yet"))
+
+
+    form.reg_plate.choices = [(car.reg_plate, car.car_nickname) for car in cars]
+
+
 
     if form.validate_on_submit():
+
+        if (not form.previous_pickup_location.data or not form.previous_dropoff_location.data):
+            flash("You must select or create a new location for pickup and/or drop off", "danger")
+            return render_template('newride.html', title="New Journey", form=form)
 
         # check if previous_pickup and dropoff are the same
         if (form.previous_pickup_location.data == form.previous_dropoff_location.data):
             flash("Start and end location cannot be the same", "danger")
-            return render_template('newride.html', title="New Journey", form=form)
-
-        if(not form.previous_pickup_location.data or not form.previous_dropoff_location.data):
-            flash("You must select or create a new location for pickup and/or drop off", "danger")
             return render_template('newride.html', title="New Journey", form=form)
 
         pickup_location = form.previous_pickup_location.data
@@ -912,6 +920,8 @@ def availableJourneys():
         input_time_str = request.form.get('time')
         pickup_postcode = request.form.get('pickup_postcode')
         dropoff_postcode = request.form.get('dropoff_postcode')
+        type = request.form.get('j_type')
+
         sort_by = request.form.get('sort_by', 'time')  # Default sorting by time
 
         #filter by date
@@ -941,11 +951,22 @@ def availableJourneys():
             )
 
         #filter by postcode
+
+        # for UK postcodes last three digits always inward code so using outward
+
         if pickup_postcode:
-            journeys = journeys.filter(Location.postcode.ilike(f"%{pickup_postcode}%"))
+            pickup_postcode = pickup_postcode.strip().upper()
+            outward_pickup = len(pickup_postcode) - 3
+            journeys = journeys.filter(Location.postcode.ilike(f"%{pickup_postcode[:outward_pickup]}%"))
 
         if dropoff_postcode:
-            journeys = journeys.filter(Location.postcode.ilike(f"%{dropoff_postcode}%"))
+            dropoff_postcode = dropoff_postcode.strip().upper()
+            outward_dropoff = len(dropoff_postcode) - 3
+            journeys = journeys.filter(Location.postcode.ilike(f"%{dropoff_postcode[:outward_dropoff]}%"))
+
+        # filter by commute or one time
+        if type != "ALL":
+            journeys = journeys.filter(Journey.journey_type == type)
 
         #sort by rating or datetime
         if sort_by == 'rating':

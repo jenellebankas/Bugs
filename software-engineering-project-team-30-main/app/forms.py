@@ -135,6 +135,7 @@ class FilterJourneysForm(FlaskForm):
     time = TimeField('Time', render_kw={"min" : datetime.now() + timedelta(minutes=15)})
     pickup_postcode = StringField('Pickup Postcode', validators=[Optional()])
     dropoff_postcode = StringField('Dropoff Postcode', validators=[Optional()])
+    j_type = SelectField('Choose Journey Type', choices=[("ALL", "All Journeys"), ('ONE TIME', "One Time"), ('DAILY', "Daily"), ('WEEKLY', "Weekly")])
     sort_by = SelectField('Sort By', choices=[("time", "Time"), ("rating", "Driver Rating")])
 
 class ResetPasswordRequestForm(FlaskForm):
