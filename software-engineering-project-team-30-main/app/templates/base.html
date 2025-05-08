@@ -98,26 +98,34 @@
 
 
 
-<!-- Flashed messages-->
-<div class="messages">
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            <ul>
-                {% for category, message in messages %}
-                    <div class="container">
-                        <!-- Catgeory for warning, make it dismissable-->
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            <!-- Message-->
-                            <span><strong>{{ message }}</strong></span>
-                            <!-- Close button -->
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </div>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-</div>
+<!-- Flashed messages using SweetAlert2 toast style -->
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% if messages %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        {% for category, message in messages %}
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          });
+
+          Toast.fire({
+            icon: "{{ 'success' if category == 'success' else 'error' if category == 'danger' or category == 'error' else 'info' }}",
+            title: "{{ message }}"
+          });
+        {% endfor %}
+      });
+    </script>
+  {% endif %}
+{% endwith %}
+
 
 {% block content %}{% endblock %}
 </body>

@@ -111,8 +111,7 @@ def login():
             return redirect(url_for('profile'))
         else:
             # Pass the error message directly to the template (no flash needed)
-            error_message = 'Invalid email or password'
-            return render_template('login.html', title='Skrrrt Login', form=form, page='login', error_message=error_message)
+            flash('Incorrect email or password','danger')
 
     return render_template('login.html', title='Skrrrt Login', form=form, page='login')
 
@@ -404,8 +403,8 @@ def register_driver():
 
             # check licence plate is of the correct format
             if not re.search(r'^([A-Z]{3}\s?(\d{3}|\d{2}|d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$', form.reg_plate.data):
-                error_message = "This is not a valid UK Car Registration Plate"
-                return render_template('driversignup.html', title="Register to drive!", form=form, error_message=error_message)
+                flash("Licence plate not in the correct format", "danger")
+                return render_template('driversignup.html', title="Register to drive!", form=form)
 
             car = Car(car_nickname=form.car_nickname.data, reg_plate=form.reg_plate.data, make=form.make.data,
                       model=form.model.data,
@@ -417,8 +416,7 @@ def register_driver():
             return redirect(url_for('make_journey'))
 
     except Exception as e:
-        app.logger.error(f"Error in driver registration: {e}")
-        error_message = "Error in registration."
+        flash("Error in driver registration","danger")
 
     # Render with or without errors
     return render_template('driversignup.html', title="Register to drive!", form=form, error_message=error_message)

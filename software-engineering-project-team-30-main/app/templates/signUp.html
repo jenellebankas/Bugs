@@ -1,83 +1,68 @@
 {% extends "base.html" %}
 {% block content %}
 
-  <div class="edit-profile-container">
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+  <div class="signup-form-container p-5 shadow-lg bg-white rounded">
     <h1 class="text-center mb-4">Sign Up to Skrrrt!</h1>
-    <form action="" method="post" name="Register-Page" class="p-4 border rounded shadow-sm bg-white">
+
+    <form action="" method="post" name="Register-Page">
       {{ form.hidden_tag() }}
 
-      <div class="input-group">
+      <div class="signup-form-group mb-3">
         <label for="first_name">First Name</label>
-        {{ form.first_name(class_='form-control', id='username') }}
-
+        {{ form.first_name(class_='form-control') }}
         {% for error in form.first_name.errors %}
-        <div class="alert alert-danger" role="alert">
-          {{ error }}
-        </div>
+          <div class="signup-error text-danger small">{{ error }}</div>
         {% endfor %}
       </div>
 
-      <div class="input-group">
+      <div class="signup-form-group mb-3">
         <label for="last_name">Last Name</label>
-
-        {{ form.last_name(class_='form-control', id='username') }}
+        {{ form.last_name(class_='form-control') }}
         {% for error in form.last_name.errors %}
-        <div class="alert alert-danger" role="alert">
-          {{ error }}
-        </div>
+          <div class="signup-error text-danger small">{{ error }}</div>
         {% endfor %}
       </div>
 
-      <div class="input-group">
-        <label for="password">Password</label>
-
-        {{ form.password(class_='form-control', id='password') }}
-        {% for error in form.password.errors %}
-        <div class="alert alert-danger" role="alert">
-          {{ error }}
-        </div>
-        {% endfor %}
-      </div>
-
-      <div class="input-group">
-        <label for="password">Confirm Password</label>
-
-        {{ form.confirmpassword(class_='form-control', id='password') }}
-        {% for error in form.confirmpassword.errors %}
-        <div class="alert alert-danger" role="alert">
-          {{ error }}
-        </div>
-        {% endfor %}
-      </div>
-
-      <div class="input-group">
+      <div class="signup-form-group mb-3">
         <label for="email">Email</label>
-
-        {{ form.email(class_='form-control', id='email') }}
+        {{ form.email(class_='form-control') }}
         {% for error in form.email.errors %}
-        <div class="alert alert-danger" role="alert">
-          {{ error }}
-        </div>
+          <div class="signup-error text-danger small">{{ error }}</div>
         {% endfor %}
       </div>
 
-      <div class="input-group">
-        <label for="Phone Number">Phone Number</label>
-
-        {{ form.phone_number(class_='form-control', id='email') }}
+      <div class="signup-form-group mb-3">
+        <label for="phone_number">Phone Number</label>
+        {{ form.phone_number(class_='form-control') }}
         {% for error in form.phone_number.errors %}
-        <div class="alert alert-danger" role="alert">
-          {{ error }}
-        </div>
+          <div class="signup-error text-danger small">{{ error }}</div>
         {% endfor %}
       </div>
 
-      <button type="submit" class="btn btn-primary btn-block">Sign Up</button><br>
-      
-      <div class="text-center mt-3">
-        <a href="/login">Already have an Account? Login</a>
+      <div class="signup-form-group mb-3">
+        <label for="password">Password</label>
+        {{ form.password(class_='form-control') }}
+        {% for error in form.password.errors %}
+          <div class="signup-error text-danger small">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="signup-form-group mb-4">
+        <label for="confirmpassword">Confirm Password</label>
+        {{ form.confirmpassword(class_='form-control') }}
+        {% for error in form.confirmpassword.errors %}
+          <div class="signup-error text-danger small">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="signup-btn btn btn-primary w-100">Sign Up</button>
+
+      <div class="signup-link text-center mt-3">
+        <a href="/login">Already have an account? Log in</a>
       </div>
     </form>
   </div>
+</div>
 
 {% endblock %}
