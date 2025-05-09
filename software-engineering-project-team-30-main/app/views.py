@@ -390,7 +390,7 @@ def register_driver():
         if form.validate_on_submit():
 
             # validation for the driving licence
-            if not re.search(r'^[A-Z9]{5}\d[0156]\d([0][1-9]|[12]\d|3[01])\d[A-Z9]{2}\d[A-Z]{2}$', form.liscence_num.data):
+            if not re.search(r'^[A-Z9]{5}\d(0[1-9]|1[0-2]|5[1-9]|6[0-2])(0[1-9]|[12]\d|3[01])\d[A-Z9]{2}\d[A-Z]{2}$', form.liscence_num.data):
                 error_message = "This is not a valid UK Licence Format"
                 return render_template('driversignup.html', title="Register to drive!", form=form, error_message=error_message)
 
@@ -406,14 +406,22 @@ def register_driver():
                 flash("Licence plate not in the correct format", "danger")
                 return render_template('driversignup.html', title="Register to drive!", form=form)
 
-            car = Car(car_nickname=form.car_nickname.data, reg_plate=form.reg_plate.data, make=form.make.data,
+            existing_car = Car.query.filter_by(reg_plate=form.reg_plate.data).first()
+
+            if not existing_car:
+                car = Car(car_nickname=form.car_nickname.data, reg_plate=form.reg_plate.data, make=form.make.data,
                       model=form.model.data,
                       colour=form.colour.data, max_seats=int(form.max_seats.data), driver_id=int(driver.driver_id))
-            db.session.add(car)
-            db.session.commit()
 
-            # ✅ on success, redirect
-            return redirect(url_for('make_journey'))
+                db.session.add(car)
+                db.session.commit()
+
+                # ✅ on success, redirect
+                return redirect(url_for('make_journey'))
+
+            else:
+
+                flash("A Car with this registration plate already exists", "danger")
 
     except Exception as e:
         flash("Error in driver registration","danger")
